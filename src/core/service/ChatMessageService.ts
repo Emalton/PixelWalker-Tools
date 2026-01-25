@@ -4,6 +4,16 @@ export function sendPrivateChatMessage(message: string, playerId: number) {
   sendRawMessage(`/pm #${playerId} [BOT] ${message}`)
 }
 
+export function sendToastMessage(message: string, playerIds: number | number[]) {
+
+  const ids = Array.isArray(playerIds) ? playerIds : [playerIds]
+  if (ids.length === 0) return
+
+  const selector = ids.map((id) => `[id=${id}]`).join('')
+  
+  sendRawMessage(`/toast @a${selector} "${message}" `)
+}
+
 export function sendGlobalChatMessage(message: string) {
   sendRawMessage(`[BOT] ${message}`)
 }
