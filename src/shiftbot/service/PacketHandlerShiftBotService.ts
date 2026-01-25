@@ -1,5 +1,5 @@
 import { getPwApiClient, getPwBotType, getPwGameClient, getPwGameWorldHelper } from '@/core/store/PwClientStore.ts'
-import { sendGlobalChatMessage, sendPrivateChatMessage, sendRawMessage } from '@/core/service/ChatMessageService.ts'
+import { sendToastMessage, sendGlobalChatMessage, sendPrivateChatMessage, sendRawMessage } from '@/core/service/ChatMessageService.ts'
 import { ProtoGen } from 'pw-js-api'
 import { CallbackEntry } from '@/core/type/CallbackEntry.ts'
 import {
@@ -178,7 +178,7 @@ function checkIfPlayerCompletedLevel(data: ProtoGen.PlayerTeamUpdatePacket) {
     const player = getPwGameWorldHelper().getPlayer(playerId)!
 
     if (player.states.coins.gold !== useShiftBotRoundStore().currentMapEntry!.coinCount) {
-      sendPrivateChatMessage("You have not collected all coins. Either you're cheating or an error occured.", playerId)
+      sendToastMessage("You have not collected all coins. Either you're cheating or an error occurred.", playerId)
       disqualifyPlayerFromRound(playerId)
       sendRawMessage(`/tp #${playerId} ${afkPos.x} ${afkPos.y}`)
 
@@ -348,8 +348,6 @@ async function placeShiftBotWorld() {
 }
 
 async function placeShiftBotMap(mapEntry: ShiftBotMapEntry) {
-  sendGlobalChatMessage('Loading map...')
-
   const worldBlocks = [
     ...convertDeserializedStructureToWorldBlocks(mapEntry.blocks, mapTopLeftPos),
     ...useShiftBotWorldStore().mapSurroundingBlocks,
@@ -816,7 +814,7 @@ async function everySecondShiftBotUpdate() {
       const MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME = 2
       const activePlayerCount = getActivePlayerCount()
       if (activePlayerCount >= MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME) {
-        sendGlobalChatMessage(`A total of ${activePlayerCount} active players were found. Starting round...`)
+        sendGlobalChatMessage(`${activePlayerCount} active players found. Starting round...`)
         setShiftBotState(ShiftBotState.PREPARING_FOR_FIRST_ROUND)
         useShiftBotRoundStore().waitingForMorePlayersMessagePrintedOnce = false
         return
@@ -827,7 +825,7 @@ async function everySecondShiftBotUpdate() {
         useShiftBotWorldStore().lastActivePlayerCount < activePlayerCount
       ) {
         sendGlobalChatMessage(
-          `${activePlayerCount} active player(s) found. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `${activePlayerCount} active player(s) found. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
 
@@ -836,7 +834,7 @@ async function everySecondShiftBotUpdate() {
       if (!useShiftBotRoundStore().waitingForMorePlayersMessagePrintedOnce) {
         useShiftBotRoundStore().waitingForMorePlayersMessagePrintedOnce = true
         sendGlobalChatMessage(
-          `Waiting for more players. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `Waiting for more players. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
       break
@@ -864,10 +862,11 @@ async function everySecondShiftBotUpdate() {
 
       useShiftBotRoundStore().currentLevelDifficulty = getLevelDifficultyForNextRound()
 
+      
       sendGlobalChatMessage(
-        `Level ${useShiftBotRoundStore().currentLevel}. Difficulty: ${ShiftBotLevelDifficulty[useShiftBotRoundStore().currentLevelDifficulty]}. ${getPlayersInGameCount()} players remaining. First ${getRequiredPlayersCountToFinishLevelEarlyToEndRound()} to finish survive`,
+        `Level ${useShiftBotRoundStore().currentLevel}. Difficulty: ${ShiftBotLevelDifficulty[useShiftBotRoundStore().currentLevelDifficulty]}. ${getRequiredPlayersCountToFinishLevelEarlyToEndRound()}/${getPlayersInGameCount()} continue to the next round.`,
       )
-
+      
       const map = getRandomMap()
       useShiftBotRoundStore().currentMapEntry = map
 
@@ -991,8 +990,8 @@ function disqualifyPlayerFromRoundBecauseAfk(playerId: number) {
 function makePlayerAfk(playerId: number) {
   sendRawMessage(`/team #${playerId} ${TEAM_RED}`)
   removePlayerFromPlayersInGame(playerId)
-  sendPrivateChatMessage(
-    'You are now marked as AFK. You can move at any time to unmark yourself or type .afk again',
+  sendToastMessage(
+    `You're AFK. Enter .afk again to join the next round.`,
     playerId,
   )
 }

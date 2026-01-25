@@ -324,8 +324,7 @@ async function placeCurseBotWorld() {
 }
 
 async function placeCurseBotMap(mapEntry: CurseBotMapEntry) {
-  sendGlobalChatMessage('Loading map...')
-
+  
   await placeWorldDataBlocks(mapEntry.blocks, mapTopLeftPos)
 }
 
@@ -584,7 +583,7 @@ async function everySecondCurseBotUpdate() {
       const MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME = 2
       const activePlayerCount = getActivePlayerCount()
       if (activePlayerCount >= MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME) {
-        sendGlobalChatMessage(`A total of ${activePlayerCount} active players were found. Starting round...`)
+        sendGlobalChatMessage(`${activePlayerCount} active players found. Starting round...`)
         setCurseBotState(CurseBotState.PREPARING_FOR_NEXT_ROUND)
         useCurseBotRoundStore().waitingForMorePlayersMessagePrintedOnce = false
         return
@@ -595,7 +594,7 @@ async function everySecondCurseBotUpdate() {
         useCurseBotWorldStore().lastActivePlayerCount < activePlayerCount
       ) {
         sendGlobalChatMessage(
-          `${activePlayerCount} active player(s) found. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `${activePlayerCount} active player(s) found. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
 
@@ -604,7 +603,7 @@ async function everySecondCurseBotUpdate() {
       if (!useCurseBotRoundStore().waitingForMorePlayersMessagePrintedOnce) {
         useCurseBotRoundStore().waitingForMorePlayersMessagePrintedOnce = true
         sendGlobalChatMessage(
-          `Waiting for more players. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `Waiting for more players. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
       break

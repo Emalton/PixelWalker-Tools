@@ -989,7 +989,7 @@ async function everySecondBomBotUpdate() {
       const MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME = 2
       const activePlayerCount = getActivePlayerCount()
       if (activePlayerCount >= MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME) {
-        sendGlobalChatMessage(`A total of ${activePlayerCount} active players were found. Starting round...`)
+        sendGlobalChatMessage(`${activePlayerCount} active players found. Starting round...`)
         setBomBotState(BomBotState.PREPARING_FOR_NEXT_ROUND)
         useBomBotRoundStore().waitingForMorePlayersMessagePrintedOnce = false
         return
@@ -1000,7 +1000,7 @@ async function everySecondBomBotUpdate() {
         useBomBotWorldStore().lastActivePlayerCount < activePlayerCount
       ) {
         sendGlobalChatMessage(
-          `${activePlayerCount} active player(s) found. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `${activePlayerCount} active player(s) found. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
 
@@ -1009,7 +1009,7 @@ async function everySecondBomBotUpdate() {
       if (!useBomBotRoundStore().waitingForMorePlayersMessagePrintedOnce) {
         useBomBotRoundStore().waitingForMorePlayersMessagePrintedOnce = true
         sendGlobalChatMessage(
-          `Waiting for more players. Minimum of ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} active players are required to start the game`,
+          `Waiting for more players. ${MINIMUM_PLAYER_COUNT_REQUIRED_TO_START_GAME} are required to start the game.`,
         )
       }
       break
