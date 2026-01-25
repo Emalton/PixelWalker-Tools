@@ -190,6 +190,12 @@ function checkIfPlayerCompletedLevel(data: ProtoGen.PlayerTeamUpdatePacket) {
 
     const lastPlayerCompletedLevel = totalCompletedCount >= getRequiredPlayersCountToFinishLevelEarlyToEndRound()
 
+
+    const elapsedSeconds = ((performance.now() - useShiftBotRoundStore().timestampInMsWhenRoundStarted) / 1000).toFixed(
+      2,
+    )
+    sendToastMessage(`You finished this round in ${elapsedSeconds} seconds.`, playerId)
+    
     if (!useShiftBotRoundStore().atLeastOnePlayerCompletedLevel) {
       useShiftBotRoundStore().timestampInMsWhenFirstPlayerCompletedLevel = performance.now()
       useShiftBotRoundStore().atLeastOnePlayerCompletedLevel = true
